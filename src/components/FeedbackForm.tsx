@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { MAX_CHARACTERS } from "../lib/constants";
 
-export default function FeedbackForm() {
+type FeedbackFormProps = {
+  onAddToList: (text: string) => void;
+};
+
+export default function FeedbackForm({ onAddToList }: FeedbackFormProps) {
   const [text, setText] = useState("");
   const charCount = MAX_CHARACTERS - text.length;
 
@@ -11,8 +15,18 @@ export default function FeedbackForm() {
     setText(newText);
   };
 
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!text.split(" ").find((word) => word.includes("#"))) {
+      alert("Your feedback must include a #company");
+      return;
+    }
+    onAddToList(text);
+    setText("");
+  };
+
   return (
-    <form className="form">
+    <form onSubmit={handleSubmit} className="form">
       <textarea
         value={text}
         onChange={handleChange}
